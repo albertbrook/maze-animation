@@ -2,17 +2,23 @@ package mazeanimation;
 
 import java.awt.*;
 
-class Functions {
-    private static Functions functions;
+class Draw {
+    private static Draw draw;
 
-    private Functions(Main main) {
-        main.add(setCanvas());
+    private Canvas canvas;
+
+    private Draw() {
+        canvas = setCanvas();
     }
 
-    static Functions getFunctions(Main main) {
-        if (functions == null)
-            functions = new Functions(main);
-        return functions;
+    static Draw getDraw() {
+        if (draw == null)
+            draw = new Draw();
+        return draw;
+    }
+
+    Canvas getCanvas() {
+        return canvas;
     }
 
     private Canvas setCanvas() {
@@ -30,6 +36,8 @@ class Functions {
                             drawBlock(i, j, Color.RED, g2);
                         else if (Settings.MAP[i][j] == 3)
                             drawBlock(i, j, Color.GREEN, g2);
+                        else if (Settings.MAP[i][j] == 4)
+                            drawBlock(i, j, Color.BLUE, g2);
                     }
             }
 
@@ -47,7 +55,7 @@ class Functions {
         g2.drawRect(location + i * size, location + j * size, size, size);
     }
 
-    void drawBlock(int x, int y, Color color, Graphics2D g2) {
+    private void drawBlock(int x, int y, Color color, Graphics2D g2) {
         int size = Settings.LINE_SIZE + Settings.BLOCK_SIZE;
         g2.setColor(color);
         g2.fillRect((x + 1) * size, (y + 1) * size, Settings.BLOCK_SIZE, Settings.BLOCK_SIZE);

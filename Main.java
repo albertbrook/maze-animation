@@ -12,7 +12,8 @@ class Main extends JFrame {
 
         getContentPane().setBackground(Color.BLACK);
 
-        Functions.getFunctions(this);
+        add(Draw.getDraw().getCanvas());
+        BFS.getBfs().animation();
     }
 
     public static void main(String[] args) {
