@@ -3,6 +3,7 @@ package mazeanimation;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 class BFS {
@@ -28,68 +29,95 @@ class BFS {
         return null;
     }
 
-    private ArrayList<int[]> getNeighbors(int[] coordinate) {
-        ArrayList<int[]> neighbor = new ArrayList<>();
-        neighbor.add(coordinate);
-        if (coordinate[1] - 1 >= 0)
-            neighbor.add(new int[]{coordinate[0], coordinate[1] - 1});
-        if (coordinate[0] + 1 <= Settings.MAP.length - 1)
-            neighbor.add(new int[]{coordinate[0] + 1, coordinate[1]});
-        if (coordinate[1] + 1 <= Settings.MAP[0].length - 1)
-            neighbor.add(new int[]{coordinate[0], coordinate[1] + 1});
-        if (coordinate[0] - 1 >= 0)
-            neighbor.add(new int[]{coordinate[0] - 1, coordinate[1]});
-        return neighbor;
+    private boolean[][] getVisited() {
+        boolean[][] visited = new boolean[Settings.MAP.length][Settings.MAP[0].length];
+        for (int i = 0; i < visited.length; i++)
+            for (int j = 0; j < visited[0].length; j++)
+                if (Settings.MAP[i][j] == 1)
+                    visited[i][j] = true;
+        return visited;
+
     }
 
-    void animation() {
-        if (getStart() != null) {
-            Queue<int[]> queue = new LinkedList<>();
-            queue.offer(getStart());
-            boolean[][] visited = new boolean[Settings.MAP.length][Settings.MAP[0].length];
-            for (int i = 0; i < Settings.MAP.length; i++)
-                for (int j = 0; j < Settings.MAP[0].length; j++)
-                    if (Settings.MAP[i][j] == 1)
-                        visited[i][j] = true;
-            ArrayList<ArrayList<int[]>> link = new ArrayList<>();
-            while (!queue.isEmpty()) {
-                int[] pop = queue.poll();
-                if (!visited[pop[0]][pop[1]]) {
-                    visited[pop[0]][pop[1]] = true;
-                    ArrayList<int[]> neighbors = getNeighbors(pop);
-                    link.add(neighbors);
-                    for (int i = 1; i < neighbors.size(); i++)
-                        queue.offer(neighbors.get(i));
-                    if (Settings.MAP[pop[0]][pop[1]] == 3) {
-                        ArrayList<int[]> router = new ArrayList<>();
-                        int[] son = link.get(link.size() - 1).get(0);
-                        for (int i = link.size() - 2; i >= 1; i--) {
-                            for (int j = 1; j < link.get(i).size(); j++) {
-                                if (son[0] == link.get(i).get(j)[0] && son[1] == link.get(i).get(j)[1]) {
-                                    router.add(link.get(i).get(0));
-                                    son = link.get(i).get(0);
-                                }
-                            }
+    private ArrayList<ArrayList<int[]>> getNeighbors(int[] coordinate, int[] index) {
+        ArrayList<ArrayList<int[]>> neighbors = new ArrayList<>();
+        if (coordinate[1] - 1 >= 0)
+            neighbors.add(new ArrayList<int[]>(){{
+                add(new int[]{coordinate[0], coordinate[1] - 1});
+            }});
+        if (coordinate[0] + 1 <= Settings.MAP.length - 1)
+            neighbors.add(new ArrayList<int[]>(){{
+                add(new int[]{coordinate[0] + 1, coordinate[1]});
+            }});
+        if (coordinate[1] + 1 <= Settings.MAP[0].length - 1)
+            neighbors.add(new ArrayList<int[]>(){{
+                add(new int[]{coordinate[0], coordinate[1] + 1});
+            }});
+        if (coordinate[0] - 1 >= 0)
+            neighbors.add(new ArrayList<int[]>(){{
+                add(new int[]{coordinate[0] - 1, coordinate[1]});
+            }});
+        for (ArrayList<int[]> neighbor: neighbors) {
+            neighbor.add(coordinate);
+            neighbor.add(new int[]{index[0] + 1});
+        }
+        return neighbors;
+    }
+
+    private ArrayList<ArrayList<int[]>> calculate() {
+        if (getStart() == null)
+            return null;
+        boolean[][] visited = getVisited();
+        Queue<ArrayList<int[]>> queues = new LinkedList<>();
+        ArrayList<ArrayList<int[]>> arrayLists = new ArrayList<>();
+        queues.offer(new ArrayList<int[]>(){{
+            add(getStart());
+            add(getStart());
+            add(new int[]{0});
+        }});
+        while (!queues.isEmpty()) {
+            ArrayList<int[]> arrayList = queues.poll();
+            if (!visited[arrayList.get(0)[0]][arrayList.get(0)[1]]) {
+                visited[arrayList.get(0)[0]][arrayList.get(0)[1]] = true;
+                ArrayList<ArrayList<int[]>> neighbors = getNeighbors(arrayList.get(0), arrayList.get(2));
+                for (ArrayList<int[]> neighbor: neighbors)
+                    queues.offer(neighbor);
+                arrayLists.add(arrayList);
+                if (Settings.MAP[arrayList.get(0)[0]][arrayList.get(0)[1]] == 3) {
+                    for (ArrayList<int[]> i: arrayLists) {
+                        for (int[] j: i) {
+                            System.out.print("[");
+                            for (int k: j)
+                                System.out.print(k + ",");
+                            System.out.print("\b] ");
                         }
-                        new Thread() {
-                            @Override
-                            public void run() {
-                                super.run();
-                                for (int[] i: router) {
-                                    Settings.MAP[i[0]][i[1]] = 4;
-                                    canvas.repaint();
-                                    try {
-                                        Thread.sleep(200);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        }.start();
-                        return;
+                        System.out.println("\b");
                     }
+                    return arrayLists;
                 }
             }
         }
+        return null;
+    }
+
+    void animation() {
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                ArrayList<ArrayList<int[]>> arrayLists = calculate();
+                if (arrayLists == null)
+                    return;
+                for (int i = 1; i < arrayLists.size() - 1; i++) {
+                    Settings.MAP[arrayLists.get(i).get(0)[0]][arrayLists.get(i).get(0)[1]] = 4;
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    canvas.repaint();
+                }
+            }
+        }.start();
     }
 }

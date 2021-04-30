@@ -5,7 +5,7 @@ import java.awt.*;
 
 class Main extends JFrame {
     private Main() {
-        setTitle("Maze - AlbertBrook");
+        setTitle("Maze Animation - AlbertBrook");
         setSize(Settings.SCREEN_SIZE);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

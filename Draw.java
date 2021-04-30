@@ -38,6 +38,8 @@ class Draw {
                             drawBlock(i, j, Color.GREEN, g2);
                         else if (Settings.MAP[i][j] == 4)
                             drawBlock(i, j, Color.BLUE, g2);
+                        else if (Settings.MAP[i][j] == 5)
+                            drawBlock(i, j, Color.MAGENTA, g2);
                     }
             }
 
