@@ -1,10 +1,5 @@
-package mazeanimation;
-
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 class BFS {
     private static BFS bfs;
@@ -64,7 +59,7 @@ class BFS {
         return neighbors;
     }
 
-    private ArrayList<ArrayList<int[]>> calculate() {
+    private ArrayList<ArrayList<ArrayList<int[]>>> calculate() {
         if (getStart() == null)
             return null;
         boolean[][] visited = getVisited();
@@ -93,7 +88,19 @@ class BFS {
                         }
                         System.out.println("\b");
                     }
-                    return arrayLists;
+                    ArrayList<ArrayList<ArrayList<int[]>>> arrayLists1 = new ArrayList<>();
+                    int index = arrayLists.get(0).get(2)[0];
+                    arrayLists1.add(new ArrayList<ArrayList<int[]>>(){});
+                    for (ArrayList<int[]> i: arrayLists)
+                        if (i.get(2)[0] == index)
+                            arrayLists1.get(index).add(i);
+                        else {
+                            index += 1;
+                            arrayLists1.add(new ArrayList<ArrayList<int[]>>(){{
+                                add(i);
+                            }});
+                        }
+                    return arrayLists1;
                 }
             }
         }
@@ -105,16 +112,39 @@ class BFS {
             @Override
             public void run() {
                 super.run();
-                ArrayList<ArrayList<int[]>> arrayLists = calculate();
+                ArrayList<ArrayList<ArrayList<int[]>>> arrayLists = calculate();
                 if (arrayLists == null)
                     return;
-                for (int i = 1; i < arrayLists.size() - 1; i++) {
-                    Settings.MAP[arrayLists.get(i).get(0)[0]][arrayLists.get(i).get(0)[1]] = 4;
+                arrayLists.get(0).remove(0);
+                ArrayList<int[]> terminal = arrayLists.get(arrayLists.size() - 1).get(arrayLists.get(arrayLists.size() - 1).size() - 1);
+                arrayLists.get(arrayLists.size() - 1).remove(arrayLists.get(arrayLists.size() - 1).size() - 1);
+                ArrayList<int[]> router = new ArrayList<int[]>(){{
+                    add(terminal.get(1));
+                }};
+                for (ArrayList<ArrayList<int[]>> arrayList : arrayLists) {
                     try {
                         Thread.sleep(200);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    for (ArrayList<int[]> ints : arrayList)
+                        Settings.MAP[ints.get(0)[0]][ints.get(0)[1]] = 4;
+                    canvas.repaint();
+                }
+                for (int i = arrayLists.size() - 1; i >= 2; i--) {
+                    for (int j = arrayLists.get(i).size() - 1; j >= 0; j--) {
+                        if (router.get(router.size() - 1)[0] == arrayLists.get(i).get(j).get(0)[0] &&
+                                router.get(router.size() - 1)[1] == arrayLists.get(i).get(j).get(0)[1])
+                            router.add(arrayLists.get(i).get(j).get(1));
+                    }
+                }
+                for (int[] ints: router) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    Settings.MAP[ints[0]][ints[1]] = 5;
                     canvas.repaint();
                 }
             }

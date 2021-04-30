@@ -1,5 +1,3 @@
-package mazeanimation;
-
 import javax.swing.*;
 import java.awt.*;
 

@@ -1,5 +1,3 @@
-package mazeanimation;
-
 import java.awt.*;
 
 class Draw {

@@ -1,5 +1,3 @@
-package mazeanimation;
-
 import java.awt.*;
 import java.util.Random;
 
@@ -14,13 +12,13 @@ class Settings {
 
     private static byte[][] setMap() {
         byte[][] map = new byte[10][10];
-        map[1][0] = 2;
-        map[9][8] = 3;
+        map[4][4] = 2;
+        map[7][8] = 3;
         Random r = new Random();
         for (int i = 0; i < 20; i++) {
             int x = r.nextInt(10);
             int y = r.nextInt(10);
-            while (x == 1 && y == 0 || x == 9 && y ==8) {
+            while (x == 4 && y == 4 || x == 7 && y ==8) {
                 x = r.nextInt(10);
                 y = r.nextInt(10);
             }
