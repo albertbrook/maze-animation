@@ -8,6 +8,9 @@ class Settings {
     static final int BLOCK_SIZE = 60;
     static final Dimension SCREEN_SIZE = setScreenSize();
 
+    static final int SEARCH_SPEED = 500;
+    static final int ROUTE_SPEED = 300;
+
     private Settings() {}
 
     private static byte[][] setMap() {
@@ -18,7 +21,7 @@ class Settings {
         for (int i = 0; i < 20; i++) {
             int x = r.nextInt(10);
             int y = r.nextInt(10);
-            while (x == 4 && y == 4 || x == 7 && y ==8) {
+            while (map[x][y] == 2 || map[x][y] == 3) {
                 x = r.nextInt(10);
                 y = r.nextInt(10);
             }

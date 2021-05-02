@@ -118,12 +118,12 @@ class BFS {
                 arrayLists.get(0).remove(0);
                 ArrayList<int[]> terminal = arrayLists.get(arrayLists.size() - 1).get(arrayLists.get(arrayLists.size() - 1).size() - 1);
                 arrayLists.get(arrayLists.size() - 1).remove(arrayLists.get(arrayLists.size() - 1).size() - 1);
-                ArrayList<int[]> router = new ArrayList<int[]>(){{
+                ArrayList<int[]> route = new ArrayList<int[]>(){{
                     add(terminal.get(1));
                 }};
                 for (ArrayList<ArrayList<int[]>> arrayList : arrayLists) {
                     try {
-                        Thread.sleep(200);
+                        Thread.sleep(Settings.SEARCH_SPEED);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -133,14 +133,14 @@ class BFS {
                 }
                 for (int i = arrayLists.size() - 1; i >= 2; i--) {
                     for (int j = arrayLists.get(i).size() - 1; j >= 0; j--) {
-                        if (router.get(router.size() - 1)[0] == arrayLists.get(i).get(j).get(0)[0] &&
-                                router.get(router.size() - 1)[1] == arrayLists.get(i).get(j).get(0)[1])
-                            router.add(arrayLists.get(i).get(j).get(1));
+                        if (route.get(route.size() - 1)[0] == arrayLists.get(i).get(j).get(0)[0] &&
+                                route.get(route.size() - 1)[1] == arrayLists.get(i).get(j).get(0)[1])
+                            route.add(arrayLists.get(i).get(j).get(1));
                     }
                 }
-                for (int[] ints: router) {
+                for (int[] ints: route) {
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(Settings.ROUTE_SPEED);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
